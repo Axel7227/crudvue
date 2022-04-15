@@ -9,7 +9,8 @@
     <tbody>
       <tr v-for="movie in movies">
         <td>{{ movie.id }}</td>
-        <td>{{ movie.title }}</td>
+        <td><input @keyup.enter="updateMovie(movie.id, movie.title)" type="text" v-model="movie.title"></td>
+        <td @click="deleteMovie(movie.id)">Supprimer</td>
       </tr>
     </tbody>
   </table>
@@ -50,6 +51,7 @@ export default {
         .then(
             (resultat) => {
               this.loadMovies()
+              this.inputMovie.title = null
             }
         )
         .catch(
@@ -58,6 +60,34 @@ export default {
             }
         )
       }
+    },
+    deleteMovie(movieId) {
+      axios.delete('http://localhost:3000/films/' + movieId)
+      .then(
+          (resultat) => {
+            this.loadMovies()
+          }
+      )
+      .catch(
+          (erreur) => {
+            console.log(erreur)
+          }
+      )
+    },
+    updateMovie(movieId, movieTitle) {
+      let string = 'http://localhost:3000/films/' + movieId
+      axios.put(string, {"title" : movieTitle})
+      .then(
+          (resultat) => {
+            console.log(resultat)
+            this.loadMovies()
+          }
+      )
+      .catch(
+          (erreur) => {
+            console.log(erreur)
+          }
+      )
     }
   },
   mounted() {
